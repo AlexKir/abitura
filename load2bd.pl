@@ -5,7 +5,7 @@ use Data::Dumper;
 use utf8;
 use Encode;
 use v5.14;
- 
+
 sub  trim { my $s = shift; $s =~ s/^\s+|\s+$//g; return $s };
 
 my $vuz=$ARGV[0];
@@ -20,22 +20,9 @@ my ($sth,$result,$dbh,$result);
 # univer | spec | number | fio | prioritet | original | ball
 my ($univer,$spec,$number,$fio,$prioritet,$original,$ball);
 
-# имя базы данных
-my $dbname = "abitura";
-# имя пользователя
-my $username = "loader";
-my $password = "qwe123";
-# имя или IP адрес сервера
-my $dbhost = "localhost";
-# порт
-my $dbport = "5432";
-# опции
-my $dboptions = "-e";
-# терминал
-#$dbtty = "ansi";
+require "pass.pl";
 
-#$dbh = DBI->connect("dbi:Pg:dbname=$dbname";host=$dbhost,"$username","$password", {PrintError => 0});
-$dbh = DBI->connect("dbi:Pg:dbname=$dbname;host=$dbhost;options=$dboptions","$username","$password",{PrintError => 0});
+$dbh = pg_init();
 $dbh->{AutoCommit} = 0;
 
 if ($DBI::err != 0) {

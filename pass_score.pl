@@ -8,47 +8,21 @@ use v5.14;
 use HTML::TableExtract;
 use LWP::Simple;
 
+require "pass.pl";
+
 sub  trim { my $s = shift; $s =~ s/^\s+|\s+$//g; return $s };
 
-my ($sth,$result,$dbh,$result,@array,$sth2);
+my ($sth,$result,$result,@array,$sth2);
 # univer | spec | number | fio | prioritet | original | ball
 my ($univer,$spec,$number,$fio,$prioritet,$original,$ball,$i,$seats);
 
-# имя базы данных
-my $dbname = "abitura";
-# имя пользователя
-my $username = "loader";
-my $password = "qwe123";
-# имя или IP адрес сервера
-my $dbhost = "localhost";
-# порт
-my $dbport = "5432";
-# опции
-my $dboptions = "-e";
-# терминал
-#$dbtty = "ansi";
-
-#$dbh = DBI->connect("dbi:Pg:dbname=$dbname";host=$dbhost,"$username","$password", {PrintError => 0});
-$dbh = DBI->connect("dbi:Pg:dbname=$dbname;host=$dbhost;options=$dboptions","$username","$password",{PrintError => 0});
+my $dbh = pg_init();
 $dbh->{AutoCommit} = 0;
 
 if ($DBI::err != 0) {
   print $DBI::errstr . "\n";
   exit($DBI::err);
 }
-
-my $sql = 'update limit_tbl l set pass_score =
-(select min(ball) b from ( SELECT d.fio, d.ball, row_number() OVER (PARTITION BY d.spec ORDER BY d.ball DESC) r
- FROM data d where d.univer = l.univer and d.spec = l.spec) t where r < l.seats)';
-
-$sth = $dbh->prepare($sql);
-$result = $sth->execute();
-if (!defined $result) {
-  print "При выполнении запроса '$sql' возникла ошибка: " . $dbh->errstr . "\n";
-  exit(0);
-}
-
-$dbh->commit();
 
 use POSIX qw(strftime);
 
@@ -96,6 +70,19 @@ foreach my $table ( $te->tables ) {
       }
    }
   }
+
+$dbh->commit();
+
+my $sql = 'update limit_tbl l set pass_score =
+(select min(ball) b from ( SELECT d.fio, d.ball, row_number() OVER (PARTITION BY d.spec ORDER BY d.ball DESC) r
+ FROM data d where d.univer = l.univer and d.spec = l.spec) t where r < l.seats)';
+
+$sth = $dbh->prepare($sql);
+$result = $sth->execute();
+if (!defined $result) {
+  print "При выполнении запроса '$sql' возникла ошибка: " . $dbh->errstr . "\n";
+  exit(0);
+}
 
 $dbh->commit();
 

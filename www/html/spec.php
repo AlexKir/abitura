@@ -121,11 +121,11 @@ if ( $original_o == 1 ) {
 if ( $ifmo_spbu == 1 ) {
   $sql = "select * from ( ".$sql." ) t
   where fio not in
-  ( select fio from data d
+  ( select fio from data d3
     where
-    d.univer in ('ifmo','spbu')
-    and d.prioritet = 1
-    and d.ball > (select max(pass_score) from limit_tbl l where l.univer = d.univer and l.spec = d.spec)
+    d3.univer in ('ifmo','spbu')
+    and d3.prioritet in (0,1)
+    and d3.ball > (select max(pass_score) from limit_tbl l where l.univer = d3.univer and l.spec = d3.spec)
   ) " ;
 }
 

@@ -40,6 +40,7 @@ while(my $s = <FILE>) {
     ($univer,$spec,$number,$fio,$prioritet,$original,$ball) = ('','','','','','','');
     ($univer,$spec,$number,$fio,$prioritet,$original,$ball) = split /;/,$s;
 	$fio = decode('utf8',$fio);
+  $original = decode('utf8',$original);
     if ( length( $fio ) > 0 ) {
       $dbh->pg_savepoint('sv'.$i);
       $sth->bind_param(1, trim($univer));

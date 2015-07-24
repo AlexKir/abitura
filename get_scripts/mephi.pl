@@ -58,7 +58,7 @@ sub spec {
         #print "   ", join(',', $row), "n";
         #print Dumper $row;
         $fio = trim(decode('utf8',@$row[2]));
-        if ( $fio =~ /\S+ \S+ \S+/ ) {
+        if ( defined $fio and $fio =~ /\S+ \S+ \S+/ ) {
           print $vuz.";";
           #print $spec.";";
           print "UNKNOWN;";

@@ -52,20 +52,24 @@ sub ystu_spec {
        foreach my $row ($table->rows) {
           #print "   ", join(',', $row), "n";
           #print Dumper $row;
-          $fio = decode('cp1251',trim (@$row[1]));
+          $fio = @$row[1];
+          if (defined $fio and $fio =~ /\S+ \S+ \S+/) {
+          $fio = decode('cp1251',trim ($fio));
           print $vuz.";";
           print $spec.";";
-          print trim(@$row[0]).";"; # �
-          print trim($fio).";"; # ���
-          print trim(0).";"; # ���������
-          print trim(decode('cp1251',@$row[7])).";"; # ��������
+          print trim(@$row[0]).";"; # рейтинг
+          print trim($fio).";";   #
+          print trim(0).";";      # приоритет
+          if ( defined @$row[7] ) {    print trim(decode('cp1251',@$row[7])).";"; } # Оригинал}
+          else {print ";";}
           $b = @$row[4];
           #print $b;
-          if ( $b =~ /(\d+)\s+\(.*/ ) {
+          if ( defined $b and $b =~ /(\d+)\s+\(.*/ ) {
             $b = $1;
           } else { $b = 0;}
-          print trim($b);	    # ����
+          print trim($b);	    #
           print "\n";
+        }
        }
       }
     #print Dumper $te;

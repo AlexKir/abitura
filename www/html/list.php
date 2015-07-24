@@ -1,3 +1,6 @@
+<html>
+<head></head>
+<body>
 <?php
 include_once "../php/connect.php";
 
@@ -37,4 +40,8 @@ while ($row = pg_fetch_row($result)) {
 #echo "<p>";
 #include "js/ya.js";
 #echo "</p>";
+echo "\n";
+include_once("js/g.js");
  ?>
+</body>
+</html>

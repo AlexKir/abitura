@@ -88,7 +88,8 @@ sub spec2 {
      foreach my $row ($table->rows) {
         #print "   ", join(',', $row), "n";
         #print Dumper $row;
-        $fio = trim(decode('utf8',@$row[2]));
+         $fio = '';
+        if (defined  @$row[2] ) { $fio = trim(decode('utf8',@$row[2]));
         if ( $fio =~ /\S+ \S+ \S+/ ) {
           print $vuz.";";
           print $spec.";";

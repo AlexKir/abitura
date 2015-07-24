@@ -40,7 +40,7 @@ sub spec {
      foreach my $row ($table->rows) {
         #print "   ", join(',', $row), "n";
         #print Dumper $row;
-        if ( trim(@$row[1]) =~ /\S+ \S+ \S+/ ) {
+        if ( defined @$row[1] and trim(@$row[1]) =~ /\S+ \S+ \S+/ ) {
           print $vuz.";";
           print $spec.";";
           print trim(@$row[0]).";";  # №
@@ -60,7 +60,7 @@ sub spec {
        foreach my $row ($table->rows) {
           #print "   ", join(',', $row), "n";
           #print Dumper $row;
-          if ( trim(@$row[1]) =~ /\S+ \S+ \S+/ ) {
+          if ( defined @$row[1] and trim(@$row[1]) =~ /\S+ \S+ \S+/ ) {
             print $vuz.";";
             print $spec.";";
             print trim(@$row[0]).";";  # №
@@ -80,7 +80,7 @@ sub spec {
          foreach my $row ($table->rows) {
             #print "   ", join(',', $row), "n";
             #print Dumper $row;
-            if ( trim(@$row[1]) =~ /\S+ \S+ \S+/ ) {
+            if ( defined @$row[1] and trim(@$row[1]) =~ /\S+ \S+ \S+/ ) {
               print $vuz.";";
               print $spec.";";
               print trim(@$row[0]).";";  # №

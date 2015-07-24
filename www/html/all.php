@@ -1,3 +1,6 @@
+<html>
+<head></head>
+<body>
 <?php
 include_once "../php/connect.php";
 
@@ -35,5 +38,9 @@ echo "<table border=1 width=90%>";
 #echo "<p>";
 #include "js/ya.js";
 #echo "</p>";
+echo "\n";
+include_once("js/g.js");
+ ?>
+</body>
+</html>
 
-?>

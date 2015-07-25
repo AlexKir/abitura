@@ -54,10 +54,10 @@ while ($row = pg_fetch_row($result)) {
   else {echo '<input type="checkbox" name="original_o">Попытаться убрать абитуриентов у кого оригиналы в других вузах.</input><br>';}
   if ( $original_h == 1 ) {echo '<input type="checkbox" name="original_h" checked>Оставить только с оригиналами</input><br>';}
   else {echo '<input type="checkbox" name="original_h">Оставить только с оригиналами</input><br>';}
-  if ( $prioritet1 == 1 ) {echo '<input type="checkbox" name="prioritet1" checked>Попытаться убрать абитуриентов не с 1 приоритетом</input><br>'; }
-  else {echo '<input type="checkbox" name="prioritet1">Попытаться убрать абитуриентов не с 1 приоритетом</input><br>';}
-  if ( $ifmo_spbu == 1 ) {echo '<input type="checkbox" name="ifmo_spbu" checked>Попытаться убрать абитуриентов кто проходит в ИТМО</input><br>'; }
-  else {echo '<input type="checkbox" name="ifmo_spbu">Попытаться убрать абитуриентов кто проходит в ИТМО</input><br>';}
+  if ( $prioritet1 == 1 ) {echo '<input type="checkbox" name="prioritet1" checked>Оставить только с 1 приоритетом</input><br>'; }
+  else {echo '<input type="checkbox" name="prioritet1">Оставить только с 1 приоритетом</input><br>';}
+  if ( $ifmo_spbu == 1 ) {echo '<input type="checkbox" name="ifmo_spbu" checked>Попытаться убрать абитуриентов кто проходит в ИТМО и СПБГУ</input><br>'; }
+  else {echo '<input type="checkbox" name="ifmo_spbu">Попытаться убрать абитуриентов кто проходит в ИТМО и СПБГУ</input><br>';}
 ?>
   <input type="submit" value="Обновить">
 </form>
@@ -70,6 +70,48 @@ while ($row = pg_fetch_row($result)) {
   echo "<b>Количество мест: </b>$row[0]<br>";
 }
 
+$sql = "select min(calc_ball) b from
+( SELECT t.fio, t.calc_ball, row_number() OVER (ORDER BY t.calc_ball DESC) r from
+ ( SELECT  d.fio,
+   CASE when d.ball > 0
+   then d.ball
+   else (select max(ball) from data d2 where d.fio = d2.fio and ball < 320)
+  end calc_ball
+  from data d
+  where d.univer = $1 and d.spec = $2 and d.prioritet in (0,1)
+ ) t
+) t2
+where r < (select l.seats from limit_tbl l where l.univer = $1 and l.spec = $2)";
+
+$statement = pg_prepare($dbconn3,'myquery4', $sql);
+$result = pg_execute($dbconn3,'myquery4',array("$univer","$spec"));
+while ($row = pg_fetch_row($result)) {
+  if ( $row[0] > 0 ) { echo "<b>Проходной балл: </b>$row[0] (Учитываем только 1 приоритет)<br>";}
+}
+
+$sql = "select min(calc_ball) b from
+( SELECT t.fio, t.calc_ball, row_number() OVER (ORDER BY t.calc_ball DESC) r from
+ ( SELECT  d.fio,
+   CASE when d.ball > 0
+   then d.ball
+   else (select max(ball) from data d2 where d.fio = d2.fio and ball < 320)
+  end calc_ball
+  from data d
+  where d.univer = $1 and d.spec = $2 and d.prioritet in (0,1) and (original is null
+    or lower(original) like '%да%'
+    or lower(original) like '%Да%'
+    or lower(original) like '%ригинал%'
+    or lower(original) like '%одлинник%'
+    or lower(original) like '%+%')
+ ) t
+) t2
+where r < (select l.seats from limit_tbl l where l.univer = $1 and l.spec = $2)";
+
+$statement = pg_prepare($dbconn3,'myquery5', $sql);
+$result = pg_execute($dbconn3,'myquery5',array("$univer","$spec"));
+while ($row = pg_fetch_row($result)) {
+  if ( $row[0] > 0 ) { echo "<b>Проходной балл: </b>$row[0] (Учитываем только 1 приоритет, только подлинники)<br>"; }
+}
 
 $sql = "select distinct number,fio,prioritet,original,ball,
  CASE when  d1.ball > 0

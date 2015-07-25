@@ -54,16 +54,17 @@ sub ifmo_spec  {
          #print Dumper $row;
          #$flag = Encode::is_utf8(@$row[1]);
          #print $flag;
+         # № 	ФИО 	Приоритет 	Кафедра 	Условие поступления 	ЕГЭ+ИД 	ЕГЭ 	ИД(а-г) 	ИД(д) 	Подлинник
          if ( Encode::is_utf8(@$row[1]) ) {$fio = trim (decode('utf8',@$row[1])) } else { $fio = trim (@$row[1]);}
-         if ( $fio !~ /ФИО/ and length($fio) > 10 ) {
-         print $vuz.";";
-         print $spec.";";
-         print trim(@$row[0]).";"; # №
-         print trim(decode('utf8',$fio)).";"; # ФИО
-         print trim(@$row[2]).";"; # Приоритет
-         print trim(decode('utf8',@$row[9])).";"; # Оригинал
-         print trim(@$row[8]);	    # Балл
-         print "\n";
+         if ( defined $fio and $fio !~ /ФИО/ and $fio =~ /\S+ \S+ \S+/ ) {
+          print $vuz.";";
+          print $spec.";";
+          print trim(@$row[0]).";"; # №
+          print trim(decode('utf8',$fio)).";"; # ФИО
+          print trim(@$row[2]).";"; # Приоритет
+          print trim(decode('utf8',@$row[9])).";"; # Оригинал
+          print trim(@$row[5]);	    # Балл
+          print "\n";
        }
       }
      }
@@ -85,7 +86,8 @@ sub ifmo_spec  {
 
   foreach my $table ( $te->tables ) {
      foreach my $row ($table->rows) {
-       $s = trim(@$row[0]);
+	   $s = '';
+	   if (defined @$row[0]) { $s = trim(@$row[0]);}
        #<a href="statByUsers.htm?fid=1&edform=1&facid=2&spid=1">
        if ($s =~ /.*href="(.*)">/) {
           $url = $1;

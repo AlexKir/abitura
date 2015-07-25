@@ -5,6 +5,7 @@ use Data::Dumper;
 use utf8;
 use Encode;
 use v5.14;
+use File::stat;
 
 sub  trim { my $s = shift; $s =~ s/^\s+|\s+$//g; return $s };
 
@@ -19,6 +20,9 @@ if ( (length($vuz) eq 0) or (length($fname) eq 0) ) {
 my ($sth,$result,$dbh,$result);
 # univer | spec | number | fio | prioritet | original | ball
 my ($univer,$spec,$number,$fio,$prioritet,$original,$ball);
+
+my $filesize = stat("$fname")->size;
+if (  $filesize le 1024 )  { print "File $fname too small \n"; die;}
 
 require "pass.pl";
 
@@ -40,7 +44,8 @@ while(my $s = <FILE>) {
     ($univer,$spec,$number,$fio,$prioritet,$original,$ball) = ('','','','','','','');
     ($univer,$spec,$number,$fio,$prioritet,$original,$ball) = split /;/,$s;
 	$fio = decode('utf8',$fio);
-  $original = decode('utf8',$original);
+    $original = decode('utf8',$original);
+    $spec = decode('utf8',$spec);
     if ( length( $fio ) > 0 ) {
       $dbh->pg_savepoint('sv'.$i);
       $sth->bind_param(1, trim($univer));

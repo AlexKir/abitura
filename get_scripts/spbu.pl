@@ -50,9 +50,10 @@ sub spec {
         print $spec.";";
         print trim(@$row[0]).";";  # №
         print trim(@$row[2]).";";  # ФИО
-        print trim('0').";";    # Приоритет
+        print trim(@$row[5]).";";  # Приоритет
         print $fio_list{ trim(@$row[2]) }.";"; 	# Оригинал
-        $b = trim(@$row[5]);
+        $b = trim(@$row[6]);
+        $b =~ s/,0//;
         if ( $b le 1 ) {$b=0;}
         print $b;	   	# Балл
         print "\n";

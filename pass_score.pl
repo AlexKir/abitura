@@ -86,4 +86,16 @@ if (!defined $result) {
 
 $dbh->commit();
 
+$sql = "update data set original1 = 1 where lower(original) like '%да%'  or lower(original) like '%Да%' or lower(original) like '%ригинал%' or lower(original) like '%одлинник%' or lower(original) like '%+%'";
+
+$sth = $dbh->prepare($sql);
+$result = $sth->execute();
+if (!defined $result) {
+  print "При выполнении запроса '$sql' возникла ошибка: " . $dbh->errstr . "\n";
+  exit(0);
+}
+
+$dbh->commit();
+
+
 $dbh->disconnect();

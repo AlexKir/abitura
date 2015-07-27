@@ -62,8 +62,8 @@ while(my $s = <FILE>)
 			print trim($1).";";  #
 			print trim($2).";";      #  ФИО
 			print trim('0').";";     # Приоритет
-			print trim($3).";"; 	 # Оригинал
-			print trim($4);	   	   #  Балл
+			print trim($4).";"; 	 # Оригинал
+			print trim($3);	   	   #  Балл
 			print "\n";
       $incomplete = 0;
 		}

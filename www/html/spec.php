@@ -79,6 +79,7 @@ $sql = "select min(calc_ball) b from
   end calc_ball
   from data d
   where d.univer = $1 and d.spec = $2 and d.prioritet in (0,1)
+  and ( ( ( original is null or original1 = 1 )	or d.fio not in (select d4.fio from data d4 where d4.univer <> $1 and d4.original1 = 1) ) ) 
  ) t
 ) t2
 where r < (select l.seats from limit_tbl l where l.univer = $1 and l.spec = $2)";

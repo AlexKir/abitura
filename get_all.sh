@@ -14,3 +14,4 @@ do
 done
 find /var/lib/nginx/cache -type f -delete
 cat csv/$d/* > /var/www/html/abitura/$d.txt
+perl pass_score.pl

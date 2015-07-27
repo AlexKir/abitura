@@ -8,7 +8,8 @@
   #use Spreadsheet::ParseExcel;
   #use switch;
   use v5.14;
-#  use utf8;
+  use utf8;
+  binmode(STDOUT,':utf8');
 use warnings;
 
 warn "run *** $0 ***";
@@ -21,51 +22,84 @@ my $dname = strftime "%m-%d", localtime;
 $dname = 'in/'.$dname;
 mkdir $dname;
 
-my $d = strftime "%d_%m", localtime;
+my $d = strftime "%m%d", localtime;
 
 my $vuz = 'guap';
-my ($url,$fname,$b,$te,$s);
+my ($url,$fname,$b,$te,$s,$spec,$fio,$c);
 
 sub spec {
 	my $url = shift;
 	my $spec = shift;
-
+  #print $spec." ".$url."\n";
+  #return;
   #print "$vuz\n";
 	my $fname = $dname.'/'.$vuz.'-'.$spec.'.html';
 
 	getstore($url, $fname);
 
-	my $te = HTML::TableExtract->new( depth => 2, count => 0 );
+	#my $te = HTML::TableExtract->new( depth => 2, count => 0 );
+  my $te = HTML::TableExtract->new( attribs => { width=>"100%" } );
 	$te->parse_file($fname);
 
 	#print Dumper $te;
 	#return;
+# \'10134',
+# \'Хрусталев Владимир Викторович',
+# \'80',
+# \'59',
+# \'76',
+# \'215',
+# \'10',
+# \'0',
+# \'0',
+# \'5',
+# \'230',
+# \'1',
+# \'Да',
+# \'Закрытое акционерное общество "Котлин-Новатор"'
 
 	foreach my $table ( $te->tables ) {
      foreach my $row ($table->rows) {
         #print "   ", join(',', $row), "n";
         #print Dumper $row;
-        print $vuz.";";
-        print $spec.";";
-        print trim("0").";"; # №
-        print trim(@$row[1]).";"; # ФИО
-        print trim("0").";"; # Приоритет
-        print trim("").";";	 # Оригинал
-        print trim("0");	 # Балл
-        print "\n";
+        $fio = decode('utf8',@$row[1]);
+        if ( defined $fio and $fio !~ /Фамилия/ and $fio =~ /\S+ \S+ \S+/ ) {
+          print $vuz.";";
+          print $spec.";";
+          print trim("0").";"; # №
+          print trim($fio).";"; # ФИО
+          $c = @$row;
+          #print Dumper $c;
+          if ( $c eq 9 ) {
+              print trim(@$row[7]).";";
+              print trim(decode('utf8',@$row[8])).";";	 # Оригинал
+              print trim(0);	 # Балл
+          }
+          else
+          {
+              print trim(@$row[11]).";"; # Приоритет
+              print trim(decode('utf8',@$row[12])).";";	 # Оригинал
+              print trim(@$row[10]);	 # Балл
+          }
+
+
+          print "\n";
+       }
      }
     }
 }
 
-$url = 'http://portal.guap.ru/portal/priem/priem2015/lists/11.html';
+$url = 'http://portal.guap.ru/portal/priem/priem2015/lists_'.$d.'/11.html';
 $fname = $dname.'/'.$vuz.'-list.html';
 getstore($url, $fname);
 my $te = HTML::TableExtract->new( depth => 2, count => 0, keep_html => 1);
 $te->parse_file($fname);
 #print Dumper $te;
+#die;
 foreach my $table ( $te->tables ) {
    foreach my $row ($table->rows) {
-     $s = trim(@$row[3]);
+     $s = trim(@$row[5]);
+     #print 's='.$s."\n";
      #<a href="ru/abiturientam/priyom-na-1-y-kurs/podavshie-zayavlenie/ochnaya/byudzhet/radiotehnika">список</a>
      if ($s =~ /.*href=\"(.*)\".*/) {  spec ($1,trim(@$row[1]));    }
    }

@@ -119,13 +119,19 @@ $sql = "select distinct number,fio,prioritet,original,ball,
   then 0
   else (select max(ball) from data d2 where d1.fio = d2.fio and ball < 320)
  end calc_ball,
- (select commajoin (' '||d3.univer||' '||d3.spec||' '||d3.original) from data d3 where
+ (select commajoin (' '||d3.univer||' '||d3.spec||' '||d3.original)
+   from data d3 where
    d1.fio = d3.fio
-   and d1.univer <> d3.univer
- )  calc_original
+   and d3.univer <> $1
+ )  calc_original ,
+ (select max(d4.original1)
+   from data d4 where
+   d4.fio = d1.fio
+   and d4.univer <> $1
+ )  orig1
 from data d1
 where
- univer = $1 and spec = $2 ";
+ d1.univer = $1 and d1.spec = $2 ";
 
 if ( $prioritet1 == 1 ) {  $sql = $sql."  and prioritet < 2 "; }
 
@@ -190,7 +196,7 @@ echo "<table border=1 width=90%>";
  echo "<tr><th>Номер</th><th>ФИО</th><th>Приоритет</th><th>Оригинал</th><th>Балл</th><th>Балл(2)</th><th>Другие заявления</th></tr>";
  $i = 1;
  while ($row = pg_fetch_row($result)) {
-  echo "<tr>";
+   if ( $row[7] == 1 ) {  echo "<tr bgcolor=silver>"; } else {  echo "<tr>"; }
    echo "<td>".$i."</td>";
    echo "<td>".$row[1]."</td>";
    echo "<td>".$row[2]."</td>";

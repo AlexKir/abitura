@@ -22,7 +22,7 @@ while ($row = pg_fetch_row($result)) {
 
         switch ($univer) {
           case "guap" : $spec = "'02.03.03','09.03.03','09.03.04'"; break;
-          case "uniyar" : $spec = "'01.03.02','02.03.02','09.03.03'"; break;
+          case "uniyar" : $spec = "'01.03.02','02.03.02','09.03.03','01.03.02-IVT'"; break;
           case "sut" : $spec = "'09.03.01','09.03.02','09.03.04'"; break;
           case "eltech" : $spec = "'01.03.02','09.03.01','09.03.04'"; break;
           case "spbstu" : $spec = "'02.03.02','09.03.01','09.03.04'"; break;

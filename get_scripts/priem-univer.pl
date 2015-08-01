@@ -24,7 +24,7 @@ mkdir $dname;
 my $d = strftime "%d_%m", localtime;
 
 my $vuz = 'priem-univer';
-my ($url,$fname,$b,$te,$s,$spec);
+my ($url,$fname,$b,$te,$s,$spec,$fio,$orig);
 
 sub spec {
 	my $url = shift;
@@ -39,19 +39,28 @@ sub spec {
 
 	my $te = HTML::TableExtract->new( attribs => { class => "prikaz" });
 	$te->parse_file($fname);
+	#print Dumper $te;
+	#return;
 
 	foreach my $table ( $te->tables ) {
      foreach my $row ($table->rows) {
         #print "   ", join(',', $row), "n";
         #print Dumper $row;
-        print $vuz.";";
-        print $spec.";";
-        print trim(@$row[0]).";";  # №
-        print trim(@$row[1]).";";  # ФИО
-        print trim(@$row[2]).";";  # Приоритет
-        print trim('').";"; 	   # Оригинал
-        print trim(@$row[4]);	   # Балл
-        print "\n";
+        $fio = '';
+	if ( defined @$row[2] ) { $fio = @$row[2];}
+	if ( $fio =~ /\S+ \S+ \S+/ ) {
+         print $vuz.";";
+         print $spec.";";
+         print trim(0).";";  # №
+         print trim(@$row[2]).";";  # ФИО
+         print trim(@$row[3]).";";  # Приоритет
+	 $orig = '';
+	 if (defined @$row[4]) { $orig = trim(@$row[4]); }
+	 $orig =~ s/\s/#/g; $orig =~ s/#+/ /g;
+         print trim($orig).";";  # Оригинал
+         print trim(@$row[5]);	   # Балл
+         print "\n";
+	}
      }
     }
 } # spec
@@ -59,7 +68,7 @@ sub spec {
 $url = 'http://priem-univer.ru/byudzhet';
 $fname = $dname.'/'.$vuz.'-list.html';
 getstore($url, $fname);
-my $te = HTML::TableExtract->new( depth => 0, count => 0,keep_html => 1);
+$te = HTML::TableExtract->new( depth => 0, count => 0,keep_html => 1);
 $te->parse_file($fname);
 #print Dumper $te;
 foreach my $table ( $te->tables ) {
@@ -83,4 +92,4 @@ foreach my $table ( $te->tables ) {
 # 11.03.04 ЭЛЕКТРОНИКА И НАНОЭЛЕКТРОНИКА
 #priemuniver ('http://priem-univer.ru/render/bakalavr_spisok_byudzhet_110304-elektronika-i-nanoelektronika.html','11.03.04');
 # 27.03.04 УПРАВЛЕНИЕ В ТЕХНИЧЕСКИХ СИСТЕМАХ
-#priemuniver ('http://priem-univer.ru/render/bakalavr_spisok_byudzhet_270304-upravlenije-v-tehnicheskih-sistemah.html','27.03.04');
+#priemuniver ('h#ttp://priem-univer.ru/render/bakalavr_spisok_byudzhet_270304-upravlenije-v-tehnicheskih-sistemah.html','27.03.04');

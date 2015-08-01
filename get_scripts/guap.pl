@@ -22,7 +22,6 @@ my $dname = strftime "%m-%d", localtime;
 $dname = 'in/'.$dname;
 mkdir $dname;
 
-my $d = strftime "%m%d", localtime;
 
 my $vuz = 'guap';
 my ($url,$fname,$b,$te,$s,$spec,$fio,$c);
@@ -37,12 +36,12 @@ sub spec {
 
 	getstore($url, $fname);
 
-	#my $te = HTML::TableExtract->new( depth => 2, count => 0 );
-  my $te = HTML::TableExtract->new( attribs => { width=>"100%" } );
+	my $te = HTML::TableExtract->new( depth => 2, count => 0 );
+  #my $te = HTML::TableExtract->new( attribs => { width=>"100%" } );
 	$te->parse_file($fname);
 
-	#print Dumper $te;
-	#return;
+#	print Dumper $te;
+#	return;
 # \'10134',
 # \'Хрусталев Владимир Викторович',
 # \'80',
@@ -88,7 +87,8 @@ sub spec {
      }
     }
 }
-
+my $d = strftime "%m%d", localtime;
+#$d='0727';
 $url = 'http://portal.guap.ru/portal/priem/priem2015/lists_'.$d.'/11.html';
 $fname = $dname.'/'.$vuz.'-list.html';
 getstore($url, $fname);
@@ -98,7 +98,7 @@ $te->parse_file($fname);
 #die;
 foreach my $table ( $te->tables ) {
    foreach my $row ($table->rows) {
-     $s = trim(@$row[5]);
+     $s = trim(@$row[4]);
      #print 's='.$s."\n";
      #<a href="ru/abiturientam/priyom-na-1-y-kurs/podavshie-zayavlenie/ochnaya/byudzhet/radiotehnika">список</a>
      if ($s =~ /.*href=\"(.*)\".*/) {  spec ($1,trim(@$row[1]));    }

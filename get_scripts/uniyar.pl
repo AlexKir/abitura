@@ -36,17 +36,17 @@ my $fio = '';
 
 sub spec {
 
-my $url = shift;
-my $spec = shift;
-my $incomplete = 0;
+ my $url = shift;
+ my $spec = shift;
+ my $incomplete = 0;
 
-$fname = $dname.'/'.$vuz.'-'.$spec.'.pdf';
-getstore($url, $fname);
-my $cmd = "bash pdf2text.sh ".$fname." ".$dname."/uniyar.txt";
-system($cmd);
-#die;
-open(FILE,$dname."/uniyar.txt");
-while(my $s = <FILE>)
+ $fname = $dname.'/'.$vuz.'-'.$spec.'.pdf';
+ getstore($url, $fname);
+ my $cmd = "bash pdf2text.sh ".$fname." ".$dname."/uniyar.txt";
+ system($cmd);
+ #die;
+ open(FILE,$dname."/uniyar.txt");
+ while(my $s = <FILE>)
 	{
     #           1                 2
     #print $s."\n";
@@ -55,7 +55,7 @@ while(my $s = <FILE>)
     #print "s1 = ".$s."\n";
     # 1                33515 Пуханов Вячеслав Сергеевич         мат - 86; рус - 87; инф - 97;   (сочинение);                274 Нет
     #301   35904 Басков Михаил Вадимович       мат - 50; рус - 66; инф - 44;   (сочинение)              162 Нет
-    if ( $s =~ /(\d+)\s+\d+\s+(\S+ \S+ \S+).*\s+(\d+)\s+(\S+)$/ ) {
+    if ( $s =~ /(\d+)\s+\d\d\d\d+\s+(\S+ \S+ \S+).*\s+(\d+)\s+(\S+)$/ ) {
       #print $s."\n";
 			print $vuz.";";
 			print $spec.";";
@@ -90,10 +90,11 @@ while(my $s = <FILE>)
 close(FILE);
 }
 
-spec ('http://priem.uniyar.ac.ru/entrant2015/rati/mkn.pdf','02.03.01');
-spec ('http://priem.uniyar.ac.ru/entrant2015/rati/pmi_m.pdf','01.03.02-M');
-spec ('http://priem.uniyar.ac.ru/entrant2015/rati/pmi_ivt.pdf','01.03.02-IVT');
-spec ('http://priem.uniyar.ac.ru/entrant2015/rati/fiit.pdf','02.03.02');
-spec ('http://priem.uniyar.ac.ru/entrant2015/rati/kb.pdf','10.05.01');
-spec ('http://priem.uniyar.ac.ru/entrant2015/rati/pie.pdf','09.03.03');
-spec ('http://priem.uniyar.ac.ru/entrant2015/rati/ikt.pdf','11.03.02');
+$d = strftime "%d", localtime;
+spec ('http://priem.uniyar.ac.ru/entrant2015/rati/mkn'.$d.'.pdf','02.03.01');
+spec ('h`ttp://priem.uniyar.ac.ru/entrant2015/rati/pmi_m'.$d.'.pdf','01.03.02-M');
+spec ('http://priem.uniyar.ac.ru/entrant2015/rati/pmi_ivt'.$d.'.pdf','01.03.02-IVT');
+spec ('http://priem.uniyar.ac.ru/entrant2015/rati/fiit'.$d.'.pdf','02.03.02');
+spec ('http://priem.uniyar.ac.ru/entrant2015/rati/kb'.$d.'.pdf','10.05.01');
+spec ('http://priem.uniyar.ac.ru/entrant2015/rati/pie'.$d.'.pdf','09.03.03');
+spec ('http://priem.uniyar.ac.ru/entrant2015/rati/ikt'.$d.'.pdf','11.03.02');

@@ -1,5 +1,5 @@
-#!/usr/bin/perl
-  use URI;
+#!/usr/bin/perl -w
+use URI;
   use Data::Dumper;
   use HTML::TableExtract;
   use LWP::Simple;
@@ -8,7 +8,7 @@
   #use Spreadsheet::ParseExcel;
   #use switch;
   use v5.14;
-  #use utf8;
+  use utf8;
   binmode(STDOUT,':utf8');
 
   use warnings;
@@ -35,7 +35,6 @@ my $spec = '';
 my $fio = '';
 
 sub spec {
-
  my $url = shift;
  my $spec = shift;
  my $incomplete = 0;
@@ -44,7 +43,8 @@ sub spec {
  getstore($url, $fname);
  my $cmd = "bash pdf2text.sh ".$fname." ".$dname."/uniyar.txt";
  system($cmd);
- #die;
+# print $url."\n";
+# return;
  open(FILE,$dname."/uniyar.txt");
  while(my $s = <FILE>)
 	{
@@ -91,8 +91,10 @@ close(FILE);
 }
 
 $d = strftime "%d", localtime;
+$d=1;
+# http://priem.uniyar.ac.ru/entrant2015/rati/pmi_ivt1.pdf
 spec ('http://priem.uniyar.ac.ru/entrant2015/rati/mkn'.$d.'.pdf','02.03.01');
-spec ('h`ttp://priem.uniyar.ac.ru/entrant2015/rati/pmi_m'.$d.'.pdf','01.03.02-M');
+spec ('http://priem.uniyar.ac.ru/entrant2015/rati/pmi_m'.$d.'.pdf','01.03.02-M');
 spec ('http://priem.uniyar.ac.ru/entrant2015/rati/pmi_ivt'.$d.'.pdf','01.03.02-IVT');
 spec ('http://priem.uniyar.ac.ru/entrant2015/rati/fiit'.$d.'.pdf','02.03.02');
 spec ('http://priem.uniyar.ac.ru/entrant2015/rati/kb'.$d.'.pdf','10.05.01');
